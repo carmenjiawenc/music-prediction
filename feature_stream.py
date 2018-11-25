@@ -2,6 +2,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import pyaudio
 import numpy as np
+from tqdm import tqdm
 from util import compute_features, get_model, pca, CATEGORIES
 
 RATE = 44100
@@ -17,11 +18,11 @@ stream = pa.open(format=pyaudio.paFloat32,
                  frames_per_buffer=CHUNKSIZE)
 model = get_model()
 
-print("* Start Recording")
+print("* Start Recording for %d seconds" % RECORD_SECONDS)
 stream.start_stream()
 frames = []
 
-for i in range(0, int(RATE / CHUNKSIZE * RECORD_SECONDS)):
+for i in tqdm(range(0, int(RATE / CHUNKSIZE * RECORD_SECONDS))):
     data = stream.read(CHUNKSIZE, exception_on_overflow=False)
     frames.append(np.fromstring(data, dtype=np.float32))
 
