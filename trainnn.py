@@ -9,6 +9,7 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 import numpy as np
+import pickle
 
 le = preprocessing.LabelEncoder()
 
@@ -18,6 +19,8 @@ y = df_x.iloc[:,520].values
 
 pca = PCA(n_components = 'mle', svd_solver = 'full')
 X = pca.fit_transform(X)
+# X = pca.fit(X)
+# pickle.dump(X, open('pca.model', 'wb+'))
 
 le.fit(y)
 y = le.transform(y)
