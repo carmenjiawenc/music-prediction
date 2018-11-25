@@ -12,12 +12,12 @@ CATEGORIES = ['Electronic', 'Experimental', 'Folk', 'Hip-Hop', 'International', 
 
 def pca(features):
     X = pickle.load(open('pca.model', 'rb+'))
-    return X.transform(features)
+    return X.transform(features.values.reshape(1,-1))
 
 
 def get_model():
     model = Sequential()
-    model.add(Dense(30, input_dim=517, init="uniform", activation="relu"))
+    model.add(Dense(30, input_dim=517, activation="relu", kernel_initializer="uniform"))
     model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
     model.add(Dense(20, activation="relu", kernel_initializer="uniform"))
     model.add(Dense(6))
