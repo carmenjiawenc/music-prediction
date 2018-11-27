@@ -15,14 +15,23 @@ def pca(features):
     return X.transform(features.values.reshape(1,-1))
 
 
-def get_model():
-    model = Sequential()
-    model.add(Dense(30, input_dim=517, activation="relu", kernel_initializer="uniform"))
-    model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
-    model.add(Dense(20, activation="relu", kernel_initializer="uniform"))
-    model.add(Dense(6))
-    model.add(Activation("softmax"))
-    model.load_weights("music_weight_cat6.h5")
+def get_model(model_weight="cat6"):
+    if model_weight == "cat6":
+        model = Sequential()
+        model.add(Dense(30, input_dim=517, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(20, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(6))
+        model.add(Activation("softmax"))
+        model.load_weights("music_weight_cat6.h5")
+    elif model_weight == "cat8":
+        model = Sequential()
+        model.add(Dense(30, input_dim=518, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(20, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(8))
+        model.add(Activation("softmax"))
+        model.load_weights("music_cat8_weight.h5")
     return model
 
 

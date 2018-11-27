@@ -8,6 +8,7 @@ from util import compute_features, get_model, pca, CATEGORIES
 RATE = 44100
 RECORD_SECONDS = 30
 CHUNKSIZE = 2048
+MODEL_VERSION = "cat8"
 
 pa = pyaudio.PyAudio()
 print("Machine SampleRate: %s" % pa.get_device_info_by_index(0)['defaultSampleRate'])
@@ -16,7 +17,7 @@ stream = pa.open(format=pyaudio.paFloat32,
                  rate=RATE,
                  input=True,
                  frames_per_buffer=CHUNKSIZE)
-model = get_model()
+model = get_model(MODEL_VERSION)
 
 print("* Start Recording for %d seconds" % RECORD_SECONDS)
 stream.start_stream()
@@ -33,8 +34,11 @@ pa.terminate()
 
 audio_data = np.hstack(frames)
 features = compute_features('test', audio_data, RATE)
-features = pca(features)
+if MODEL_VERSION == "cat6":
+    features = pca(features)
 pred = model.predict(features)
 cat = np.argmax(pred)
-# print(pred)
-print(CATEGORIES[cat])
+pred = pred.tolist()[0]
+for i in range(len(pred)):
+    print('{}: {:04f}'.format(CATEGORIES[i], pred[i]))
+print('* Final Prediction: {}'.format(CATEGORIES[cat]))
