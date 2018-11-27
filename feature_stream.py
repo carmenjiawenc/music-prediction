@@ -3,12 +3,13 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import pyaudio
 import numpy as np
 from tqdm import tqdm
-from util import compute_features, get_model, pca, CATEGORIES
+from util import compute_features, get_model, pca, categories
 
 RATE = 44100
 RECORD_SECONDS = 30
 CHUNKSIZE = 2048
-MODEL_VERSION = "cat8"
+# cat6_nopca, cat6, cat8
+MODEL_VERSION = "cat6_nopca"
 
 pa = pyaudio.PyAudio()
 print("Machine SampleRate: %s" % pa.get_device_info_by_index(0)['defaultSampleRate'])
@@ -36,9 +37,11 @@ audio_data = np.hstack(frames)
 features = compute_features('test', audio_data, RATE)
 if MODEL_VERSION == "cat6":
     features = pca(features)
+elif MODEL_VERSION in ["cat8", "cat6_nopca"]:
+    features = np.expand_dims(features.transpose(), axis=0)
 pred = model.predict(features)
 cat = np.argmax(pred)
 pred = pred.tolist()[0]
 for i in range(len(pred)):
-    print('{}: {:04f}'.format(CATEGORIES[i], pred[i]))
-print('* Final Prediction: {}'.format(CATEGORIES[cat]))
+    print('{}: {:04f}'.format(categories(MODEL_VERSION)[i], pred[i]))
+print('* Final Prediction: {}'.format(categories(MODEL_VERSION)[cat]))

@@ -7,16 +7,21 @@ from keras import Sequential
 from keras.layers import Dense, Activation
 import pickle
 
-CATEGORIES = ['Electronic', 'Experimental', 'Folk', 'Hip-Hop', 'International', 'Rock']
-
+def categories(model_version):
+    if model_version in ['cat6', 'cat6_nopca']:
+        return ['Electronic', 'Experimental', 'Folk', 'Hip-Hop', 'International', 'Rock']
+    elif model_version == "cat8":
+        return ['Electronic', 'Experimental', 'Folk', 'Hip-Hop', 'Instrumental','International', 'Pop', 'Rock']
+    else:
+        raise NotImplementedError
 
 def pca(features):
     X = pickle.load(open('pca.model', 'rb+'))
     return X.transform(features.values.reshape(1,-1))
 
 
-def get_model(model_weight="cat6"):
-    if model_weight == "cat6":
+def get_model(mode_version="cat6"):
+    if mode_version == "cat6":
         model = Sequential()
         model.add(Dense(30, input_dim=517, activation="relu", kernel_initializer="uniform"))
         model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
@@ -24,7 +29,15 @@ def get_model(model_weight="cat6"):
         model.add(Dense(6))
         model.add(Activation("softmax"))
         model.load_weights("music_weight_cat6.h5")
-    elif model_weight == "cat8":
+    elif mode_version == "cat6_nopca":
+        model = Sequential()
+        model.add(Dense(30, input_dim=518, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(20, activation="relu", kernel_initializer="uniform"))
+        model.add(Dense(6))
+        model.add(Activation("softmax"))
+        model.load_weights("music_weight_cat6_no_pca.h5")
+    elif mode_version == "cat8":
         model = Sequential()
         model.add(Dense(30, input_dim=518, activation="relu", kernel_initializer="uniform"))
         model.add(Dense(40, activation="relu", kernel_initializer="uniform"))
@@ -32,6 +45,8 @@ def get_model(model_weight="cat6"):
         model.add(Dense(8))
         model.add(Activation("softmax"))
         model.load_weights("music_cat8_weight.h5")
+    else:
+        raise NotImplementedError
     return model
 
 
